@@ -1,2 +1,2 @@
 # cute_ocr
-Th
+The very cute Optical Character Recognition (OCR).
