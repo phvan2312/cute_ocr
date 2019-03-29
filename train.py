@@ -106,38 +106,38 @@ def train_from_scratch(train_lbl_fn, train_src_root, valid_lbl_fn, valid_src_roo
     vocab = utils.build_vocab(train_labels)
 
     train_transfroms = transforms.Compose([
-        #
-        # transforms.RandomApply(
-        #     [
-        #         random_dilate,
-        #     ],
-        #     p=0.15),
-        #
-        # transforms.RandomApply(
-        #     [
-        #         random_erode,
-        #     ],
-        #     p=0.15),
-        #
-        # transforms.RandomApply(
-        #     [
-        #         ImgAugTransform(),
-        #     ],
-        #     p=0.15),
-        #
-        # transforms.RandomApply(
-        #     [
-        #         transforms.Pad(3, fill=255, padding_mode='constant'),
-        #     ],
-        #     p=0.15),
-        #
-        # transforms.RandomApply(
-        #     [
-        #         transforms.Pad(3, fill=255, padding_mode='reflect'),
-        #     ],
-        #     p=0.15),
-        #
-        # transforms.RandomAffine(degrees=5, scale=(0.9, 1.1), shear=5, resample=Image.NEAREST),
+
+        transforms.RandomApply(
+            [
+                random_dilate,
+            ],
+            p=0.15),
+
+        transforms.RandomApply(
+            [
+                random_erode,
+            ],
+            p=0.15),
+
+        transforms.RandomApply(
+            [
+                ImgAugTransform(),
+            ],
+            p=0.15),
+
+        transforms.RandomApply(
+            [
+                transforms.Pad(3, fill=255, padding_mode='constant'),
+            ],
+            p=0.15),
+
+        transforms.RandomApply(
+            [
+                transforms.Pad(3, fill=255, padding_mode='reflect'),
+            ],
+            p=0.15),
+
+        transforms.RandomAffine(degrees=5, scale=(0.9, 1.1), shear=5, resample=Image.NEAREST),
         resize_to_fixed_height,
         transforms.ToTensor()
     ])
@@ -254,19 +254,34 @@ def train_from_scratch(train_lbl_fn, train_src_root, valid_lbl_fn, valid_src_roo
                 print ("%s Validation accuracy by char: %.3f" % (get_time(), acc_char))
                 print ("%s Validation accuracy by field: %.3f" % (get_time(), acc_field))
 
+import click
+@click.command()
+@click.option('--train_lbl_fn', default='/home/vanph/Desktop/pets/IAM_DATA/data_IAM/train-labels_v2.json', help='1')
+@click.option('--train_src_root', default='/home/vanph/Desktop/pets/IAM_DATA/data_IAM/words')
+@click.option('--train_batch_size', default=16)
 
+@click.option('--valid_lbl_fn', default='/home/vanph/Desktop/pets/IAM_DATA/data_IAM/train-labels_v2.json', help='1')
+@click.option('--valid_src_root', default='/home/vanph/Desktop/pets/IAM_DATA/data_IAM/words')
+@click.option('--valid_batch_size', default=16)
 
-if __name__ == "__main__":
-    train_lbl_fn = "/home/vanph/Desktop/pets/IAM_DATA/data_IAM/train-labels_v2.json"
-    train_src_root = "/home/vanph/Desktop/pets/IAM_DATA/data_IAM/words"
-    train_batch_size = 16
-
-    valid_lbl_fn = "/home/vanph/Desktop/pets/IAM_DATA/data_IAM/valid-labels.json"
-    valid_src_root = "/home/vanph/Desktop/pets/IAM_DATA/data_IAM/words"
-    valid_batch_size = 16
-
-    config_fn = "./configs/_config.json"
-
+@click.option('--config_fn',default='./configs/_config.json')
+def main(train_lbl_fn, train_src_root, train_batch_size, valid_lbl_fn, valid_src_root, valid_batch_size, config_fn):
     train_from_scratch(train_lbl_fn, train_src_root, valid_lbl_fn, valid_src_root, train_batch_size, valid_batch_size,
                        config_fn)
+
+if __name__ == "__main__":
+    main()
+
+    # train_lbl_fn = "/home/vanph/Desktop/pets/IAM_DATA/data_IAM/train-labels_v2.json"
+    # train_src_root = "/home/vanph/Desktop/pets/IAM_DATA/data_IAM/words"
+    # train_batch_size = 16
+    #
+    # valid_lbl_fn = "/home/vanph/Desktop/pets/IAM_DATA/data_IAM/valid-labels.json"
+    # valid_src_root = "/home/vanph/Desktop/pets/IAM_DATA/data_IAM/words"
+    # valid_batch_size = 16
+    #
+    # config_fn = "./configs/_config.json"
+    #
+    # train_from_scratch(train_lbl_fn, train_src_root, valid_lbl_fn, valid_src_root, train_batch_size, valid_batch_size,
+    #                    config_fn)
 
