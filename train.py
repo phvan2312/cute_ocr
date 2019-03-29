@@ -107,37 +107,37 @@ def train_from_scratch(train_lbl_fn, train_src_root, valid_lbl_fn, valid_src_roo
 
     train_transfroms = transforms.Compose([
 
-        transforms.RandomApply(
-            [
-                random_dilate,
-            ],
-            p=0.15),
-
-        transforms.RandomApply(
-            [
-                random_erode,
-            ],
-            p=0.15),
-
-        transforms.RandomApply(
-            [
-                ImgAugTransform(),
-            ],
-            p=0.15),
-
-        transforms.RandomApply(
-            [
-                transforms.Pad(3, fill=255, padding_mode='constant'),
-            ],
-            p=0.15),
-
-        transforms.RandomApply(
-            [
-                transforms.Pad(3, fill=255, padding_mode='reflect'),
-            ],
-            p=0.15),
-
-        transforms.RandomAffine(degrees=5, scale=(0.9, 1.1), shear=5, resample=Image.NEAREST),
+        # transforms.RandomApply(
+        #     [
+        #         random_dilate,
+        #     ],
+        #     p=0.15),
+        #
+        # transforms.RandomApply(
+        #     [
+        #         random_erode,
+        #     ],
+        #     p=0.15),
+        #
+        # transforms.RandomApply(
+        #     [
+        #         ImgAugTransform(),
+        #     ],
+        #     p=0.15),
+        #
+        # transforms.RandomApply(
+        #     [
+        #         transforms.Pad(3, fill=255, padding_mode='constant'),
+        #     ],
+        #     p=0.15),
+        #
+        # transforms.RandomApply(
+        #     [
+        #         transforms.Pad(3, fill=255, padding_mode='reflect'),
+        #     ],
+        #     p=0.15),
+        #
+        # transforms.RandomAffine(degrees=5, scale=(0.9, 1.1), shear=5, resample=Image.NEAREST),
         resize_to_fixed_height,
         transforms.ToTensor()
     ])
