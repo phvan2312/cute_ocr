@@ -1,0 +1,1 @@
+python train.py --train_lbl_fn /home/kan/data/IAM_words/train-labels_v2.json --train_src_root /home/kan/data/IAM_words/words/ --train_batch_size 16 --valid_lbl_fn /home/kan/data/IAM_words/valid-labels.json --valid_src_root /home/kan/data/IAM_words/words/ --valid_batch_size 16 --config_fn ./configs/_config.json
