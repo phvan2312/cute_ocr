@@ -196,7 +196,7 @@ class Decoder(nn.Module):
         self.norm2 = Norm(hidden_dim)
         self.norm3 = Norm(hidden_dim)
 
-        self.dropout1 = nn.Dropout(p=dropout)
+        #self.dropout1 = nn.Dropout(p=dropout)
         self.dropout2 = nn.Dropout(p=dropout)
         self.dropout3 = nn.Dropout(p=dropout)
 
@@ -232,7 +232,7 @@ class Decoder(nn.Module):
         #src = self.norm1(src + self.attn1(q=_src, k=_src, v=_src).permute(1,0,2))
 
         #(w, b, hid)
-        src = self.norm1(self.dropout1(src))
+        src = self.norm1(src)
         outputs, _ = self.rnn1(src)
         outputs1 = self.norm2(self.dropout2(outputs))
         outputs, _ = self.rnn2(outputs1)
