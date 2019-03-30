@@ -4,7 +4,7 @@ import torch.nn.functional as F
 from warpctc_pytorch import CTCLoss
 
 import math
-device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 class Encoder(nn.Module):
     def __init__(self):
@@ -180,24 +180,28 @@ class FeedForward(nn.Module):
         return x
 
 class Decoder(nn.Module):
-    def __init__(self, input_dim, hidden_dim = 256 * 2, num_directions = 2, num_layers = 2, dropout = 0.1,
+    def __init__(self, input_dim, hidden_dim = 256 * 2, num_directions = 2, num_layers = 1, dropout = 0.1,
                  bidirectional = True, n_classes = 200, n_head = 1):
         super(Decoder, self).__init__()
 
         self.rnn1 = nn.LSTM(input_size=int(input_dim), hidden_size=int(hidden_dim / num_directions),
-                            num_layers=num_layers, dropout=dropout, bidirectional=bidirectional)
+                            num_layers=num_layers, dropout=0, bidirectional=bidirectional)
 
-        # self.rnn2 = nn.LSTM(input_size=int(hidden_dim), hidden_size=int(hidden_dim / num_directions),
-        #                    num_layers=num_layers, dropout=dropout,bidirectional=bidirectional)
+        self.rnn2 = nn.LSTM(input_size=int(hidden_dim), hidden_size=int(hidden_dim / num_directions),
+                           num_layers=num_layers, dropout=0,bidirectional=bidirectional)
 
         self.logit = nn.Linear(int(hidden_dim), n_classes, bias=False)
 
-        # self.norm1 = Norm(48 // 8 * 512)
-        # self.norm2 = Norm(hidden_dim)
-        # self.norm3 = Norm(hidden_dim)
+        self.norm1 = Norm(48 // 8 * 512)
+        self.norm2 = Norm(hidden_dim)
+        self.norm3 = Norm(hidden_dim)
+
+        self.dropout2 = nn.Dropout(p=dropout)
+        self.dropout3 = nn.Dropout(p=dropout)
+
         # self.norm4 = Norm(hidden_dim)
         #
-        # self.attn1 = MultiHeadAttention(4, 512 * 48 // 8, dropout=0.1)
+        #self.attn1 = MultiHeadAttention(1, 512 * 48 // 8, dropout=0.1)
         # self.attn2 = MultiHeadAttention(1, hidden_dim, dropout=0.1)
         #
         # self.ff = FeedForward(hidden_dim, hidden_dim)
@@ -219,6 +223,7 @@ class Decoder(nn.Module):
         #(w, b, c * h)
         src = src.view(w,b,c*h)
 
+
         #(b, w, ch)
         #_src = src.permute(1,0,2)
 
@@ -226,7 +231,11 @@ class Decoder(nn.Module):
         #src = self.norm1(src + self.attn1(q=_src, k=_src, v=_src).permute(1,0,2))
 
         #(w, b, hid)
+        src = self.norm1(src)
         outputs, _ = self.rnn1(src)
+        outputs1 = self.norm2(self.dropout2(outputs))
+        outputs, _ = self.rnn2(outputs1)
+        outputs = self.norm3(self.dropout3(outputs) + outputs1)
 
         #(w, b, hid)
         #outputs = self.norm2(outputs)
